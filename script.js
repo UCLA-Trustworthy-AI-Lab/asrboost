@@ -68,10 +68,10 @@ function showHowItWorks() {
     mainContent.innerHTML = `
         <div class="hiw-section">
             <div class="hiw-title">Your Dataset</div>
-            ${[1,2,3,4,5].map(i => `
+            ${[0, 1, 2, 3, 4].map(i => `
                 <div class="hiw-set">
                     <audio class="hiw-audio" controls>
-                        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-${i}.mp3" type="audio/mpeg">
+                        <source src="audio/generation/${i}/real.mp3" type="audio/mpeg">
                         Your browser does not support the audio element.
                     </audio>
                     <button class="generate-btn" data-audio="${i}">Generate instant speech data</button>
@@ -86,7 +86,8 @@ function showHowItWorks() {
             // Randomize audio example
             let idx = btn.dataset.audio;
             let modalAudio = modalOverlay.querySelector('audio source');
-            modalAudio.src = "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-" + ((+idx)%5+1) + ".mp3";
+            let randNum = Math.floor(Math.random() * 5);
+            modalAudio.src = `audio/generation/${idx}/augment${randNum}.mp3`;
             modalOverlay.querySelector('audio').load();
             modalOverlay.style.display = 'block';
         };
@@ -95,10 +96,18 @@ function showHowItWorks() {
 
 // --- Modal/Popup logic ---
 modalClose.onclick = () => {
+    let modalAudio = modalOverlay.querySelector('audio');
+    modalAudio.pause();
+    modalAudio.currentTime = 0;
     modalOverlay.style.display = 'none';
 };
 modalOverlay.onclick = e => {
-    if(e.target === modalOverlay) modalOverlay.style.display = 'none';
+    if(e.target === modalOverlay){
+        let modalAudio = modalOverlay.querySelector('audio');
+        modalAudio.pause();
+        modalAudio.currentTime = 0;
+        modalOverlay.style.display = 'none';
+    }
 };
 
 // --- Tab events ---
