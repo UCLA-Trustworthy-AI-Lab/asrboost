@@ -95,6 +95,20 @@ select.full-width {
     align-items: flex-start; /* Align button with left edge of player */
 }
 
+.model-info {
+    font-size: 0.85rem;
+    color: #C0C7D6;
+    margin-top: 0.5rem;
+    font-style: italic;
+    max-width: 600px;
+    line-height: 1.3;
+    user-select: none;
+    /* Optional subtle background highlight */
+    background: rgba(192, 199, 214, 0.1);
+    padding: 6px 10px;
+    border-radius: 6px;
+}
+
 .asr-right-area {
     flex-basis: 100%;
     min-width: 180px;

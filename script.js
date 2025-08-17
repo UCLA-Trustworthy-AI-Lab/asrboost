@@ -6,10 +6,13 @@ const modalOverlay = document.getElementById('modal-overlay');
 const modalClose = document.getElementById('modal-close');
 
 const TRANSCRIPTION_PLACEHOLDER = "[Transcription output here]";
-var currInterval;
 const CORRECT_COLOR = "#56F000";
 const WRONG_COLOR = "#FF3B30";
 const NEUTRAL_COLOR = "#C0C7D6";
+
+var currInterval;
+// stores the index of the previous augmentation played so that it isn't played twice in a rwo
+var prevAugmentationInd = -1;  
 
 // --- Tab utility ---
 function setActiveTab(tab) {
@@ -60,7 +63,7 @@ function showImprovement() {
             </select>
 
             <audio class="audio-player full-width" controls id="asr-audio">
-                <source src="audio/asr/an433-marh-b.mp3" type="audio/mpeg">
+                <source src="audio/asr/cen6-marh-b.mp3" type="audio/mpeg">
                 Your browser does not support the audio element.
             </audio>
 
@@ -69,19 +72,23 @@ function showImprovement() {
 
         <div class="model-results">
             <div class="model-block">
-                <div class="model-title">Model trained w/ an4 + instant speech data</div>
+                <div class="model-title">Model trained with ASRBoost</div>
                 <div class="model-placeholder" id="with-instant">${TRANSCRIPTION_PLACEHOLDER}</div>
             </div>
             <div class="model-block">
-                <div class="model-title">Model trained without instant speech data</div>
+                <div class="model-title">Model trained without ASRBoost</div>
                 <div class="model-placeholder" id="without-instant">${TRANSCRIPTION_PLACEHOLDER}</div>
             </div>
+        </div>
+        <div id="model-info" class="model-info">
+            Models: NeMo ASR (100 epochs, AN4 dataset)<br>
+            ASRBoost training includes 4x data augmentation
         </div>
     `;
     
     // Button logic
     document.getElementById('transcribe-btn').onclick = function() { 
-        playAndTranscribe("enter four five eight two one", "enter tine tyfn onen");
+        playAndTranscribe("one five two three two", "one five two wotwo");
     };
 
     document.getElementById('audio-dropdown').onchange = function(e) {
@@ -89,9 +96,9 @@ function showImprovement() {
         let audioSrc; let goodTranscript; let badTranscript;
         switch (e.target.value) {
             case 'audio1': 
-                audioSrc = 'audio/asr/an433-marh-b.mp3'; 
-                badTranscript = "enter tine tyfn onen";
-                goodTranscript = "enter four five eight two one";
+                audioSrc = 'audio/asr/cen6-marh-b.mp3'; 
+                badTranscript = "one five two wotwo";
+                goodTranscript = "one five two three two";
                 break;
             case 'audio2': 
                 audioSrc = 'audio/asr/cen6-fcaw-b.mp3'; 
@@ -99,9 +106,9 @@ function showImprovement() {
                 goodTranscript = "one five two three six";
                 break;
             case 'audio3': 
-                audioSrc = 'audio/asr/cen6-marh-b.mp3'; 
-                badTranscript = "one five two wotwo";
-                goodTranscript = "one five two three two";
+                audioSrc = 'audio/asr/an433-marh-b.mp3'; 
+                badTranscript = "enter tine tyfn onen";
+                goodTranscript = "enter four five eight two one";
                 break;
         }
         document.getElementById('asr-audio').src = audioSrc;
@@ -139,13 +146,27 @@ function showHowItWorks() {
             // Randomize audio example
             let idx = btn.dataset.audio;
             let modalAudio = modalOverlay.querySelector('audio source');
-            let randNum = Math.floor(Math.random() * 5);
+            let randNum = pickRandNumButNot(prevAugmentationInd);
             modalAudio.src = `audio/generation/${idx}/augment${randNum}.mp3`;
             modalOverlay.querySelector('audio').load();
+            modalOverlay.querySelector('audio').play();
             modalOverlay.style.display = 'block';
             document.getElementById("modalGeneration").setAttribute("data-audio", idx);
+            prevAugmentationInd = randNum;
         };
     });
+}
+
+function pickRandNumButNot(badNum){
+    // numbers to pick are always 0, 1, 2, 3, 4 
+    let choices = [];
+    for(let i = 0; i < 5; i++){
+        if(i == badNum){
+            continue;
+        }
+        choices.push(i);
+    }
+    return choices[Math.floor(Math.random() * 4)];
 }
 
 // --- Modal/Popup logic ---
