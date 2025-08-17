@@ -88,7 +88,6 @@ select.full-width {
     text-align: center;
 }
 
-
 .asr-audio-area {
     flex: 1;
     display: flex;
@@ -227,6 +226,7 @@ select {
     font-size: 1.1rem;
     font-weight: 500;
     margin-bottom: 1rem;
+    padding: 2rem 2rem 2rem 2rem; /* general padding */
 }
 
 footer {

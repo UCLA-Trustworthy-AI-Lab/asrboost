@@ -5,11 +5,48 @@ const mainContent = document.getElementById('main-content');
 const modalOverlay = document.getElementById('modal-overlay');
 const modalClose = document.getElementById('modal-close');
 
+const TRANSCRIPTION_PLACEHOLDER = "[Transcription output here]";
+var currInterval;
+const CORRECT_COLOR = "#56F000";
+const WRONG_COLOR = "#FF3B30";
+const NEUTRAL_COLOR = "#C0C7D6";
+
 // --- Tab utility ---
 function setActiveTab(tab) {
     tabImprovement.classList.remove('active');
     tabHiw.classList.remove('active');
     tab.classList.add('active');
+}
+
+function playAndTranscribe(goodTranscript, badTranscript){
+    let goodTranscriptEl = document.getElementById('with-instant');
+    let badTranscriptEl = document.getElementById('without-instant');
+    goodTranscriptEl.textContent = "";
+    goodTranscriptEl.style = `color:${CORRECT_COLOR};`;
+    badTranscriptEl.innerHTML = "";
+
+    document.getElementById('asr-audio').play();
+
+    let goodList = goodTranscript.split(" ");
+    let badList = badTranscript.split(" ");
+    let i = 0;  // index of word being shown
+    currInterval = setInterval(function(){
+        if(i >= goodList.length && i >= badList.length){
+            clearInterval(currInterval);
+        }
+        if(i < goodList.length){
+            goodTranscriptEl.textContent += `${goodList[i]} `;
+        }
+        if(i < badList.length){
+            if(badList[i] == goodList[i]){
+                badTranscriptEl.innerHTML += `<span style="color:${CORRECT_COLOR}">${badList[i]} </span>`;
+            }
+            else{
+                badTranscriptEl.innerHTML += `<span style="color:${WRONG_COLOR}">${badList[i]} </span>`;
+            }
+        }
+        i += 1;
+    }, 400);    
 }
 
 function showImprovement() {
@@ -23,7 +60,7 @@ function showImprovement() {
             </select>
 
             <audio class="audio-player full-width" controls id="asr-audio">
-                <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
+                <source src="audio/asr/an433-marh-b.mp3" type="audio/mpeg">
                 Your browser does not support the audio element.
             </audio>
 
@@ -33,32 +70,48 @@ function showImprovement() {
         <div class="model-results">
             <div class="model-block">
                 <div class="model-title">Model trained w/ an4 + instant speech data</div>
-                <div class="model-placeholder" id="with-instant">[Transcription output here]</div>
+                <div class="model-placeholder" id="with-instant">${TRANSCRIPTION_PLACEHOLDER}</div>
             </div>
             <div class="model-block">
                 <div class="model-title">Model trained without instant speech data</div>
-                <div class="model-placeholder" id="without-instant">[Transcription output here]</div>
+                <div class="model-placeholder" id="without-instant">${TRANSCRIPTION_PLACEHOLDER}</div>
             </div>
         </div>
     `;
     
     // Button logic
-    document.getElementById('transcribe-btn').onclick = function() {
-        document.getElementById('with-instant').textContent = 'The quick brown fox jumps over the lazy dog. (with instant speech data)';
-        document.getElementById('without-instant').textContent = 'The quick brown fox jumps over the dog. (without instant speech data)';
-        document.getElementById('asr-audio').play();
+    document.getElementById('transcribe-btn').onclick = function() { 
+        playAndTranscribe("enter four five eight two one", "enter tine tyfn onen");
     };
 
     document.getElementById('audio-dropdown').onchange = function(e) {
-        let audioSrc;
+        clearInterval(currInterval);
+        let audioSrc; let goodTranscript; let badTranscript;
         switch (e.target.value) {
-            case 'audio1': audioSrc = 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3'; break;
-            case 'audio2': audioSrc = 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3'; break;
-            case 'audio3': audioSrc = 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3'; break;
+            case 'audio1': 
+                audioSrc = 'audio/asr/an433-marh-b.mp3'; 
+                badTranscript = "enter tine tyfn onen";
+                goodTranscript = "enter four five eight two one";
+                break;
+            case 'audio2': 
+                audioSrc = 'audio/asr/cen6-fcaw-b.mp3'; 
+                badTranscript = "fone five tw o six";
+                goodTranscript = "one five two three six";
+                break;
+            case 'audio3': 
+                audioSrc = 'audio/asr/cen6-marh-b.mp3'; 
+                badTranscript = "one five two wotwo";
+                goodTranscript = "one five two three two";
+                break;
         }
         document.getElementById('asr-audio').src = audioSrc;
-        document.getElementById('with-instant').textContent = '[Transcription output here]';
-        document.getElementById('without-instant').textContent = '[Transcription output here]';
+        document.getElementById('transcribe-btn').onclick = function() {
+            playAndTranscribe(goodTranscript, badTranscript);
+        };
+
+        document.getElementById('with-instant').textContent = TRANSCRIPTION_PLACEHOLDER;
+        document.getElementById('with-instant').style = `color:${NEUTRAL_COLOR};`;
+        document.getElementById('without-instant').textContent = TRANSCRIPTION_PLACEHOLDER;
     };
 }
 
@@ -90,6 +143,7 @@ function showHowItWorks() {
             modalAudio.src = `audio/generation/${idx}/augment${randNum}.mp3`;
             modalOverlay.querySelector('audio').load();
             modalOverlay.style.display = 'block';
+            document.getElementById("modalGeneration").setAttribute("data-audio", idx);
         };
     });
 }
