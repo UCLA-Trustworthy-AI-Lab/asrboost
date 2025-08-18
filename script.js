@@ -2,8 +2,6 @@
 const tabImprovement = document.getElementById('tab-improvement');
 const tabHiw = document.getElementById('tab-hiw');
 const mainContent = document.getElementById('main-content');
-const modalOverlay = document.getElementById('modal-overlay');
-const modalClose = document.getElementById('modal-close');
 
 const TRANSCRIPTION_PLACEHOLDER = "[Transcription output here]";
 const CORRECT_COLOR = "#56F000";
@@ -12,7 +10,7 @@ const NEUTRAL_COLOR = "#C0C7D6";
 
 var currInterval;
 // stores the index of the previous augmentation played so that it isn't played twice in a rwo
-var prevAugmentationInd = -1;  
+var prevAugmentationInd = 0;  // initial state generated audio to play is 0 index  
 
 // --- Tab utility ---
 function setActiveTab(tab) {
@@ -127,35 +125,85 @@ function showImprovement() {
 function showHowItWorks() {
     mainContent.innerHTML = `
         <div class="hiw-section">
-            <div class="hiw-title">Your Dataset</div>
-            ${[0, 1, 2, 3, 4].map(i => `
-                <div class="hiw-set">
-                    <audio class="hiw-audio" controls>
-                        <source src="audio/generation/${i}/real.mp3" type="audio/mpeg">
-                        Your browser does not support the audio element.
-                    </audio>
-                    <button class="generate-btn" data-audio="${i}">Generate instant speech data</button>
+            <div class="asr-top-area">
+                <label class="dropdown-label" for="audio-dataset-dropdown">Pick audio from sample dataset:</label>
+                <select id="audio-dataset-dropdown" class="full-width" ">
+                    <option value="0">Sample Audio 1</option>
+                    <option value="1">Sample Audio 2</option>
+                    <option value="2">Sample Audio 3</option>
+                    <option value="3">Sample Audio 4</option>
+                    <option value="4">Sample Audio 5</option>
+                </select>
+                <audio class="audio-player full-width" controls id="hiw-real-audio">
+                    <source id="hiw-real-audio-src" src="audio/generation/0/real.mp3" type="audio/mpeg">
+                    Your browser does not support the audio element.
+                </audio>
+                <button class="transcribe-btn full-width" id="run">Run ASRBoost</button>
+            </div>
+            
+            <div class="model-placeholder" id="generating" style="display:none;">
+                Generating new & realistic voice...
+            </div>
+            <div class="model-placeholder" id="combining" style="display:none;">
+                Combining new voice with original words...
+            </div>
+            <div id="generation-result" style="display:none;">
+                <audio class="audio-player full-width" controls id="hiw-generated-audio">
+                    <source id="hiw-generated-audio-src" src="audio/generation/0/augment0.mp3" type="audio/mpeg">
+                    Your browser does not support the audio element.
+                </audio>
+                <div class="model-title" style="margin:1%;">
+                    Done! ASRBoost repeats this process on every audio clip to expand your dataset and improve ASR models.
                 </div>
-            `).join('')}
+                <button class="transcribe-btn full-width" id="restart">Restart</button>
+            </div>
         </div>
     `;
 
-    // Attach events to each "Generate instant speech data" button
-    document.querySelectorAll('.generate-btn').forEach(btn => {
-        btn.onclick = () => {
-            // Randomize audio example
-            let idx = btn.dataset.audio;
-            let modalAudio = modalOverlay.querySelector('audio source');
-            let randNum = pickRandNumButNot(prevAugmentationInd);
-            modalAudio.src = `audio/generation/${idx}/augment${randNum}.mp3`;
-            modalOverlay.querySelector('audio').load();
-            modalOverlay.querySelector('audio').play();
-            modalOverlay.style.display = 'block';
-            document.getElementById("modalGeneration").setAttribute("data-audio", idx);
-            prevAugmentationInd = randNum;
-        };
-    });
+    document.getElementById('audio-dataset-dropdown').onchange = function(e) {
+        let realAudioSrc = document.getElementById("hiw-real-audio-src");
+        realAudioSrc.src = `audio/generation/${e.target.value}/real.mp3`;
+        let realAudioTag = document.getElementById("hiw-real-audio");
+        realAudioTag.load();
+        
+        let randNum = pickRandNumButNot(prevAugmentationInd);
+        let generatedAudioSrc = document.getElementById("hiw-generated-audio-src");
+        generatedAudioSrc.src = `audio/generation/${e.target.value}/augment${randNum}.mp3`;
+        let generatedAudioTag = document.getElementById("hiw-generated-audio");
+        generatedAudioTag.load();
+        prevAugmentationInd = randNum;
+    }
+
+    document.getElementById("run").onclick = function(e){
+        document.getElementById("generating").style = "display:visible; margin:2%;";
+        setTimeout(function(){
+            document.getElementById("combining").style = "display:visible; margin:2%;";
+        }, 500);
+        setTimeout(function(){
+            document.getElementById("generation-result").style = "display:visible;";
+            let generatedAudioTag = document.getElementById("hiw-generated-audio");
+            generatedAudioTag.play();
+        }, 1000);
+    }
+
+    document.getElementById("restart").onclick = function(e){
+        // hide stuff
+        document.getElementById("generating").style = "display:none;";
+        document.getElementById("combining").style = "display:none;";
+        document.getElementById("generation-result").style = "display:none;";
+        // set new generated audio
+        let randNum = pickRandNumButNot(prevAugmentationInd);
+        let generatedAudioSrc = document.getElementById("hiw-generated-audio-src");
+        // audio/generation/{dataset index}/augment{augmentation index}.mp3
+        // just replace augment{prevAugmentationInd} with augment{randNum}
+        generatedAudioSrc.src = generatedAudioSrc.src.replace(`augment${prevAugmentationInd}`, `augment${randNum}`);
+        let generatedAudioTag = document.getElementById("hiw-generated-audio");
+        generatedAudioTag.load();
+        prevAugmentationInd = randNum;
+    }
 }
+
+// looks too squished, copy over whatever works in see asr model improvement, buttons seem fine, text isnt
 
 function pickRandNumButNot(badNum){
     // numbers to pick are always 0, 1, 2, 3, 4 
@@ -168,22 +216,6 @@ function pickRandNumButNot(badNum){
     }
     return choices[Math.floor(Math.random() * 4)];
 }
-
-// --- Modal/Popup logic ---
-modalClose.onclick = () => {
-    let modalAudio = modalOverlay.querySelector('audio');
-    modalAudio.pause();
-    modalAudio.currentTime = 0;
-    modalOverlay.style.display = 'none';
-};
-modalOverlay.onclick = e => {
-    if(e.target === modalOverlay){
-        let modalAudio = modalOverlay.querySelector('audio');
-        modalAudio.pause();
-        modalAudio.currentTime = 0;
-        modalOverlay.style.display = 'none';
-    }
-};
 
 // --- Tab events ---
 tabImprovement.onclick = () => {
