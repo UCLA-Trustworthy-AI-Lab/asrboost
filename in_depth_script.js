@@ -106,7 +106,7 @@ function showImprovement() {
         </div>
         <div id="model-info" class="model-info">
             Models: NeMo ASR (100 epochs, AN4 dataset)<br>
-            ASRBoost training includes 5x data augmentation
+            ASRBoost and SpecAugment training include 5x data augmentation
         </div>
     `;
     
