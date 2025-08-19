@@ -1,44 +1,78 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>ASRBoost</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="style.css">
-    <link rel="icon" href="imgs/icon.svg" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ASRBoost – Improve Your Speech Recognition Models</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" href="imgs/icon.svg" />
 </head>
 <body>
-    <header>
-        <div class="title">ASRBoost</div>
-        <div class="asrboost-subtitle">
-            Build great ASR models even with limited data 
+  <header>
+    <h1>ASRBoost</h1>
+    <h2 class="tagline">Make your speech recognition models smarter.</h2>
+    <p class="subtitle">If you build or use an ASR system, we make it more accurate. Simple.</p>
+    <a href="#contact" class="cta-btn">🚀 Improve My ASR Model</a>
+  </header>
+
+  <main>
+    <!-- TOP BENEFITS -->
+    <section class="benefits">
+      <div class="benefit">
+        <h3>🔧 Easy Upgrade</h3>
+        <p>Boost accuracy without rebuilding your model.</p>
+      </div>
+      <div class="benefit">
+        <h3>⚡ Train Strong, Perform Strong</h3>
+        <p>Our way of training beats the usual methods. Your ASR gets clear, reliable results.</p>
+      </div>
+      <div class="benefit">
+        <h3>🌍 Works Anywhere</h3>
+        <p>Supports different accents, languages, and use cases.</p>
+      </div>
+    </section>
+
+    <!-- LIVE DEMO -->
+    <section class="content-section">
+      <h2>See It In Action</h2>
+      <p class="demo-explainer">
+        Listen below 👇  
+      </p>
+      <div class="demo">
+        <audio id="asr-audio" controls class="audio-player">
+          <source src="audio/asr/cen6-mjgm-b.mp3" type="audio/mpeg">
+          Your browser does not support audio.
+        </audio>
+        <button class="demo-btn" onclick="playAndTranscribe(
+          'one five two two four',
+          'one five of foe'
+        )">▶️ Play Demo</button>
+
+        <div class="transcriptions">
+          <div>
+            <h3 class="transcription-label">✔️ With ASRBoost</h3>
+            <p id="with-instant" class="transcription-text">Click Play Demo to see ASRBoost-powered transcription.</p>
+          </div>
+          <div>
+            <h3 class="transcription-label">❌ Without ASRBoost</h3>
+            <p id="without-instant" class="transcription-text">Click Play Demo to see transcription without ASRBoost.</p>
+          </div>
         </div>
-        <div class="asrboost-subtitle">
-            Works for any language
-        </div>    
-        <div class="asrboost-subtitle">
-            Outperforms existing speech dataset augmentation tech
-        </div>
-        <div class="subtitle">
-            Limited speech data holding you back? Let's talk: <a target="_blank" href="https://forms.gle/YbXWBt8ASQ6dFZrf9" class="contact-link">https://forms.gle/YbXWBt8ASQ6dFZrf9</a>
-        </div>
-    </header>
-    <div class="tab-container">
-        <button class="tab-btn active" id="tab-improvement">See ASR Model Improvement</button>
-        <button class="tab-btn" id="tab-hiw">How It Works</button>
-    </div>
-    <main>
-        <div class="content-section" id="main-content">
-            <!-- Content injected by JS -->
-        </div>
-    </main>
-    <footer>
-        <div class="footer-logos">
-            <img src="imgs/ucla.png" alt="UCLA Logo" class="logo-img" title="UCLA">
-            <img src="imgs/stanford.png" alt="Stanford Logo" class="logo-img" title="Stanford">
-            <img src="imgs/icml.png" alt="ICML Logo" class="logo-img" title="ICML">
-        </div>
-    </footer>
-    <script src="script.js"></script>
+      </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section id="contact" class="content-section contact">
+      <h2>Get Started</h2>
+      <p>Want to improve your ASR model? Let’s talk.</p>
+      <a href="https://forms.gle/YbXWBt8ASQ6dFZrf9" target="_blank" class="cta-btn">📩 Contact Us</a>
+    </section>
+  </main>
+
+  <footer>
+    <a href="in_depth.html"> Dive Deeper </a>
+  </footer>
+
+  <script src="script.js"></script>
 </body>
 </html>
