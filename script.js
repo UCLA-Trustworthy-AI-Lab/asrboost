@@ -32,5 +32,5 @@ function playAndTranscribe(goodTranscript, badTranscript){
       }
     }
     i++;
-  }, 400);
+  }, 333);
 }

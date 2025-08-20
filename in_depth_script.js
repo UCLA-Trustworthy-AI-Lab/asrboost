@@ -113,7 +113,7 @@ function showImprovement() {
     // Button logic
     document.getElementById('transcribe-btn').onclick = function() { 
         // bad, ok, good
-        playAndTranscribe("one five of foe", "one five two two our", "one five two two four");
+        playAndTranscribe("one five of {?} foe", "one five two two our", "one five two two four");
     };
 
     document.getElementById('audio-dropdown').onchange = function(e) {
@@ -122,14 +122,14 @@ function showImprovement() {
         switch (e.target.value) {
             case 'audio1': 
                 audioSrc = 'audio/asr/cen6-mjgm-b.mp3'; 
-                badTranscript = "one five of foe";
+                badTranscript = "one five of {?} foe";
                 okTranscript = "one five two two our";
                 goodTranscript = "one five two two four";
                 break;
             case 'audio2': 
                 audioSrc = 'audio/asr/cen3-menk-b.mp3'; 
-                badTranscript = "six sixtitsxty";
-                okTranscript = "sixty six thirtyter";
+                badTranscript = "six sixtitsxty {?} {?}";
+                okTranscript = "sixty six thirtyter {?}";
                 goodTranscript = "sixty six thirty three";
                 break;
             case 'audio3': 
