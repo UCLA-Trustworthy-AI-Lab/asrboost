@@ -180,15 +180,6 @@ h1 {
   text-align: center;
 }
 
-/* FOOTER */
-footer {
-  text-align: center;
-  padding: 1rem;
-  color: #C0C7D6;
-  font-size: 0.9rem;
-  margin-top: 2rem;
-}
-
 /* Mobile improvements */
 @media (max-width: 768px) {
   .benefits {
@@ -205,20 +196,11 @@ footer {
   }
 }
 
-footer a {
-  color: #00D2FF;              /* bright cyan to match your brand accent */
-  text-decoration: none;       /* remove underline by default */
-  font-weight: 500;
-  transition: color 0.2s, text-shadow 0.2s;
+footer {
+  text-align: center;
+  color: #C0C7D6;
+  font-size: 1rem;
+  padding: 3rem 1rem 2rem;
 }
 
-footer a:hover,
-footer a:focus {
-  color: #48b7ff;              /* lighter cyan when hovered */
-  text-shadow: 0 0 8px rgba(72,183,255,0.6);
-}
-
-footer a:visited {
-  color: #00D2FF;              /* avoid weird purple visited */
-}
 
